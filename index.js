@@ -1,11 +1,12 @@
-// TOFIX: spec does not say rels are unique
 module.exports = (data, debug) =>
 {
     // REQUIRED:
     // data.host <url>:<port> of the deployed site
-    // data.resource
-    // data.links
-    // and each item in links, ther must be a rel
+    // data.resource <string>
+    // data.links <array>
+    //  - Each object in data.links must contain a rel
+    //     - rels are expected to be unique [ although spec does not specify it ]. If
+    //       and rel repeats, the last of a rel will be used
 
     let host = data.host;
     delete data.host;
