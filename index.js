@@ -1,3 +1,4 @@
+// TOFIX: spec does not say rels are unique
 module.exports = (data, debug) =>
 {
     // REQUIRED:
