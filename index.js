@@ -15,6 +15,9 @@ module.exports = (data, debug) =>
     data.links.forEach((obj) => all_rels[obj.rel] = obj);
     data.links = [];
 
+    Object.getOwnPropertyNames(all_rels)
+    .forEach((rel) => data.links.push(all_rels[rel]));
+
     return (req, res, next) =>
     {
         if
@@ -45,6 +48,7 @@ module.exports = (data, debug) =>
         if(req.query.rel)
         {
             let data_copy = JSON.parse(JSON.stringify(data));
+            data_copy.links = [];
             let requested_rels = { };
 
             if(req.query.rel.constructor === String) req.query.rel = [req.query.rel];
