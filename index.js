@@ -17,7 +17,11 @@ module.exports = (data, debug) =>
 
     return (req, res, next) =>
     {
-        if(req.originalUrl.indexOf('/.well-known/webfinger') !== 0) return next();
+        if
+        (
+            req.path.indexOf('/.well-known/webfinger') !== 0 ||
+            req.method !== 'GET'
+        ) return next();
 
         res.setHeader('Access-Control-Allow-Origin', '*');
 
@@ -30,7 +34,7 @@ module.exports = (data, debug) =>
             req.query.resource.constructor !== String ||
             !req.query.resource.trim().length
         )
-        return res.status(400).send('Must contain resource');
+        return res.status(400).send('Must contain resource query parameter');
 
         if(req.query.resource.trim() !== data.subject)
         return res.status(404)
