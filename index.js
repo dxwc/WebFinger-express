@@ -35,16 +35,27 @@ module.exports = (data, debug) =>
         .send('Server has no information on the requested resource');
 
         res.contentType('application/jrd+json');
-        let data_copy = data;
+
         if(req.query.rel)
         {
+            let data_copy = JSON.parse(JSON.stringify(data));
+            let requested_rels = { };
+
             if(req.query.rel.constructor === String) req.query.rel = [req.query.rel];
+
             req.query.rel.forEach((rel) =>
             {
-                if(all_rels.hasOwnProperty(rel)) data_copy.links.push(all_rels[rel]);
+                if(all_rels.hasOwnProperty(rel)) requested_rels[rel] = true;
             });
+
+            Object.getOwnPropertyNames(requested_rels).forEach((rel) =>
+            {
+                data_copy.links.push(all_rels[rel]);
+            });
+
+            return res.status(200).send(JSON.stringify(data_copy, null, '    '));
         }
 
-        return res.status(200).send(JSON.stringify(data_copy, null, '    '));
+        return res.status(200).send(JSON.stringify(data, null, '    '));
     }
 }
