@@ -1,4 +1,4 @@
-module.exports = (data, debug) =>
+module.exports = (data, do_not_redirect_to_https) =>
 {
     // REQUIRED:
     // data.host <url>:<port> of the deployed site
@@ -28,7 +28,7 @@ module.exports = (data, debug) =>
 
         res.setHeader('Access-Control-Allow-Origin', '*');
 
-        if(!req.secure && !debug)
+        if(!req.secure && !do_not_redirect_to_https)
         return res.redirect(`https://${host}${req.originalUrl}`);
 
         if
