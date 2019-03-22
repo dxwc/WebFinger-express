@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "email-addresses": "^3.0.3",
+    "http-signature": "^1.2.0",
     "mime-types": "^2.1.22",
     "request": "^2.88.0"
   }

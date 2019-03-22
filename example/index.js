@@ -15,6 +15,7 @@ let webFingerMW = require('../send_webfinger.js')
     ]
 }, true);
 
+let pubkey = require('fs').readFileSync('../public.pem', { encoding : 'utf-8'});
 let activityStreamMW = require('../send_activitystream.js')
 ({
 	"@context": [
@@ -30,7 +31,7 @@ let activityStreamMW = require('../send_activitystream.js')
 	"publicKey": {
 		"id": "http://localhost:9005/actor#main-key",
 		"owner": "http://localhost:9005/actor",
-		"publicKeyPem": "-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----"
+		"publicKeyPem": pubkey
 	}
 }, true);
 
