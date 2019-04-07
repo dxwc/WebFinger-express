@@ -1,8 +1,6 @@
-let addr = require('email-addresses');
+let addr    = require('email-addresses');
 let request = require('request');
-let mime = require('mime-types');
-let val  = require('validator');
-var URL = require('url');
+let val     = require('validator');
 
 async function requester(url, opt)
 {
@@ -68,52 +66,7 @@ async function get_actor(url)
     );
 }
 
-// todo: https://www.npmjs.com/package/webfinger.js
-async function print_user(email)
-/** example */
-{
-    try
-    {
-        let parsed = addr.parseOneAddress(email);
-
-        let res = await get_webfinger
-        (`https://${parsed.domain}/.well-known/webfinger?resource=${email}`);
-
-        // might not need full response, if status is 200 user exists
-        if(res[0] !== 200 || !res[1] || res[1].length === 0)
-            return new Error('User not found');
-
-        if(mime.contentType(res[1]).indexOf('application/jrd+json') === -1)
-        {
-            // console.log('Unexpected content type', res[1]);
-        }
-
-        console.log(JSON.parse(res[2]));
-        console.log('\n\n');
-
-        res = await get_actor(`https://${parsed.domain}/@${parsed.local}`);
-        if(res[0] !== 200 || !res[1] || res[1].length === 0)
-            return new Error('Actor not found');
-
-        if(mime.contentType(res[1]).indexOf('application/jrd+json') === -1)
-        {
-            console.log('Unexpected content type', res[1]);
-            console.log('\n\n');
-        }
-
-        return console.log(JSON.parse(res[2]));
-    }
-    catch(err)
-    {
-        console.error(err);
-        return new Error(err);
-    }
-}
-
-/**
- * returns object with inbox and outboxes, else returns error
- */
-async function get_activitystream(user)
+async function activitystream(user)
 {
     try
     {
@@ -171,26 +124,4 @@ async function get_activitystream(user)
     }
 }
 
-// module.exports.get_boxes = get_boxes;
-// module.exports.get_actor = get_actor;
-
-// get_activitystream(`rosjackson@wandering.shop`)
-// get_activitystream(`https://hostux.social/@liofilizado_`)
-// .then((res) =>
-// {
-    // console.log(res);
-// })
-
-/*
-get_boxes('rosjackson@wandering.shop')
-.then((res) =>
-{
-    console.log(res);
-})
-.catch((err) =>
-{
-    console.error(err);
-})
-*/
-
-module.exports.get_activitystream = get_activitystream;
+module.exports.activitystream = activitystream;
