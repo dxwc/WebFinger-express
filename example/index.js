@@ -3,7 +3,6 @@ let app     = express();
 
 let webFingerMW = require('../send_webfinger.js')
 ({
-    host : 'localhost:9005', // <-- not required for webfinger but required for mw
     subject : 'bob@example.com',
     links :
     [

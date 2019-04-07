@@ -3,7 +3,6 @@ module.exports = (data, do_not_redirect_to_https) =>
     // REQUIRED:
     // data.host <url>:<port> of the deployed site
 
-    delete data.host; // todo make env var
     if
     (
         !data['@context'] ||
@@ -22,7 +21,7 @@ module.exports = (data, do_not_redirect_to_https) =>
     return (req, res, next) =>
     {
         if(!req.secure && !do_not_redirect_to_https)
-            return res.redirect(`https://${host}${req.originalUrl}`);
+            return res.redirect(`https://${process.env.host}${req.originalUrl}`);
 
         if
         (

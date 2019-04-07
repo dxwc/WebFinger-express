@@ -1,15 +1,11 @@
 module.exports = (data, do_not_redirect_to_https) =>
 {
     // REQUIRED:
-    // data.host <url>:<port> of the deployed site
     // data.resource <string>
     // data.links <array>
     //  - Each object in data.links must contain a rel
     //     - rels are expected to be unique [ although spec does not specify it ]. If
     //       and rel repeats, the last of a rel will be used
-
-    let host = data.host;
-    delete data.host;
 
     let all_rels = { };
     data.links.forEach((obj) => all_rels[obj.rel] = obj);
@@ -29,7 +25,7 @@ module.exports = (data, do_not_redirect_to_https) =>
         res.setHeader('Access-Control-Allow-Origin', '*');
 
         if(!req.secure && !do_not_redirect_to_https)
-        return res.redirect(`https://${host}${req.originalUrl}`);
+        return res.redirect(`https://${process.env.host}${req.originalUrl}`);
 
         if
         (
