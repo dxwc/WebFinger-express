@@ -1,6 +1,8 @@
 let addr = require('email-addresses');
 let request = require('request');
 let mime = require('mime-types');
+let val  = require('validator');
+var URL = require('url');
 
 async function requester(url, opt)
 {
@@ -111,22 +113,57 @@ async function print_user(email)
 /**
  * returns object with inbox and outboxes, else returns error
  */
-async function get_boxes(email)
+async function get_activitystream(user)
 {
     try
     {
-        let parsed = addr.parseOneAddress(email);
-        let res = await get_actor(`https://${parsed.domain}/@${parsed.local}`);
+        let user_self = '';
+        if(val.isEmail(user))
+        {
+            let parsed = addr.parseOneAddress(user);
+            let res = await get_webfinger
+            (
+                `https://${parsed.domain}/.well-known/webfinger?` +
+                `resource=${user}&rel=self`
+            );
 
-        if(res[0] !== 200 || !res[1] || res[1].length === 0)
+            if(res[0] !== 200 || !res[2] || res[2].length === 0)
+                return new Error('Webfinger not found');
+
+            res = JSON.parse(res[2]);
+            for(let i = 0; i < res.links.length; ++i)
+            {
+                if(res.links[i].rel === 'self')
+                {
+                    if(res.links[i].type)
+                    {
+                        if(res.links[i].type.indexOf('activity'))
+                        {
+                            user_self = res.links[i].href;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        user_self = res.links[i].href;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if(user_self.length === 0)
+        {
+            if(!val.isURL(user)) return new Error('Invalid user', user);
+            user_self = user;
+        }
+
+        let res = await get_actor(user_self);
+
+        if(res[0] !== 200 || !res[2] || res[2].length === 0)
             return new Error('Actor not found');
 
-        let out = {  };
-        res = JSON.parse(res[2]);
-        out.inbox = res.inbox;
-        out.outbox = res.outbox;
-        delete res;
-        return out;
+        return JSON.parse(res[2]);
     }
     catch(err)
     {
@@ -134,7 +171,15 @@ async function get_boxes(email)
     }
 }
 
-module.exports.get_boxes = get_boxes;
+// module.exports.get_boxes = get_boxes;
+// module.exports.get_actor = get_actor;
+
+// get_activitystream(`rosjackson@wandering.shop`)
+// get_activitystream(`https://hostux.social/@liofilizado_`)
+// .then((res) =>
+// {
+    // console.log(res);
+// })
 
 /*
 get_boxes('rosjackson@wandering.shop')
@@ -147,3 +192,5 @@ get_boxes('rosjackson@wandering.shop')
     console.error(err);
 })
 */
+
+module.exports.get_activitystream = get_activitystream;
