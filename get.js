@@ -68,60 +68,53 @@ async function get_actor(url)
 
 async function activitystream(user)
 {
-    try
+    let user_self = '';
+    if(val.isEmail(user))
     {
-        let user_self = '';
-        if(val.isEmail(user))
+        let parsed = addr.parseOneAddress(user);
+        let res = await get_webfinger
+        (
+            `https://${parsed.domain}/.well-known/webfinger?` +
+            `resource=${user}&rel=self`
+        );
+
+        if(res[0] !== 200 || !res[2] || res[2].length === 0)
+            throw new Error('Webfinger not found');
+
+        res = JSON.parse(res[2]);
+        for(let i = 0; i < res.links.length; ++i)
         {
-            let parsed = addr.parseOneAddress(user);
-            let res = await get_webfinger
-            (
-                `https://${parsed.domain}/.well-known/webfinger?` +
-                `resource=${user}&rel=self`
-            );
-
-            if(res[0] !== 200 || !res[2] || res[2].length === 0)
-                return new Error('Webfinger not found');
-
-            res = JSON.parse(res[2]);
-            for(let i = 0; i < res.links.length; ++i)
+            if(res.links[i].rel === 'self')
             {
-                if(res.links[i].rel === 'self')
+                if(res.links[i].type)
                 {
-                    if(res.links[i].type)
-                    {
-                        if(res.links[i].type.indexOf('activity'))
-                        {
-                            user_self = res.links[i].href;
-                            break;
-                        }
-                    }
-                    else
+                    if(res.links[i].type.indexOf('activity'))
                     {
                         user_self = res.links[i].href;
                         break;
                     }
                 }
+                else
+                {
+                    user_self = res.links[i].href;
+                    break;
+                }
             }
         }
-
-        if(user_self.length === 0)
-        {
-            if(!val.isURL(user)) return new Error('Invalid user', user);
-            user_self = user;
-        }
-
-        let res = await get_actor(user_self);
-
-        if(res[0] !== 200 || !res[2] || res[2].length === 0)
-            return new Error('Actor not found');
-
-        return JSON.parse(res[2]);
     }
-    catch(err)
+
+    if(user_self.length === 0)
     {
-        return err;
+        if(!val.isURL(user)) throw new Error('Invalid user', user);
+        user_self = user;
     }
+
+    let res = await get_actor(user_self);
+
+    if(res[0] !== 200 || !res[2] || res[2].length === 0)
+        throw new Error('Actor not found');
+
+    return JSON.parse(res[2]);
 }
 
 module.exports.activitystream = activitystream;

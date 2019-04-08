@@ -1,6 +1,9 @@
 {
   "dependencies": {
+    "ejs": "^2.6.1",
     "email-addresses": "^3.0.3",
+    "express": "^4.16.4",
+    "helmet": "^3.16.0",
     "http-signature": "^1.2.0",
     "mime-types": "^2.1.22",
     "request": "^2.88.0",

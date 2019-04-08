@@ -1,0 +1,108 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Home</title>
+    <script src='vue.js'></script>
+    <script src='axios.min.js'></script>
+    <script src='validator.min.js'></script>
+</head>
+<body>
+    <div id='root'>
+        <form v-on:submit.prevent='get_user'>
+            <input
+                v-model='user_input'
+                v-on:keydown='input_change'
+                type='text'
+                id='user'
+                placeholder='user account lookup'>
+            <button type='submit'>Find</button>
+            <p v-show='form_warning.length'>{{ form_warning }}</p>
+        </form>
+        <h3 v-show='user_name.length'>{{ user_name }}</h3>
+        <img v-show='profile_image.length' v-bind:src='profile_image'>
+        <ul>
+            <li v-show='user_id.length'>
+                ID: <a v-bind:href='user_id'>{{ user_id }}</a>
+            </li>
+            <li v-show='inbox.length'>
+                Inbox: <a v-bind:href='inbox'>{{ inbox }}</a>
+            </li>
+            <li v-show='outbox.length'>
+                Outbox: <a v-bind:href='outbox'>{{ outbox }}</a>
+            </li>
+        </ul>
+    </div>
+    <script>
+        let app = new Vue
+        ({
+            el   : '#root',
+            data :
+            {
+                user_input :  '',
+                profile_image : '',
+                user_name : '',
+                user_id : '',
+                inbox : '',
+                outbox : '',
+                form_warning : ''
+            },
+            methods :
+            {
+                input_change : function()
+                {
+                    this.form_warning = '';
+                },
+                get_user : async function()
+                {
+                    this.profile_image = '';
+                    this.user_name = '';
+                    this.user_id = '';
+                    this.inbox = '';
+                    this.outbox = '';
+                    this.form_warning = 'Getting information...';
+
+                    if
+                    (
+                        !validator.isEmail(this.user_input) &&
+                        !validator.isURL(this.user_input)
+                    )
+                    {
+                        this.form_warning = 'Not a valid input';
+                        return;
+                    }
+
+                    let res;
+                    try
+                    {
+                        res = await axios.get(`/user/?q=${this.user_input}`);
+                        res = res.data;
+                    }
+                    catch(err)
+                    {
+                        this.form_warning = 'Error retriving or no such user';
+                    }
+
+                    if(res)
+                    {
+                        try
+                        {
+                            this.profile_image = res.icon.url;
+                            this.user_name = res.name;
+                            this.user_id = res.id;
+                            this.inbox = res.inbox;
+                            this.outbox = res.outbox;
+                            this.form_warning = '';
+                        }
+                        catch(err)
+                        {
+                            this.form_warning = 'Error finding data in stream';
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
