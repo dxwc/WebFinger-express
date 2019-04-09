@@ -16,7 +16,16 @@
                 v-on:keydown='input_change'
                 type='text'
                 id='user'
-                placeholder='user account lookup'>
+                placeholder='user account lookup'
+                required>
+            <label v-if='is_email()'>on domain</label>
+            <input
+                v-if='is_email()'
+                v-model='domain'
+                type='text'
+                id='domain'
+                placeholder='domain'
+            required>
             <button type='submit'>Find</button>
             <p v-show='form_warning.length'>{{ form_warning }}</p>
         </form>
@@ -33,6 +42,11 @@
                 Outbox: <a v-bind:href='outbox'>{{ outbox }}</a>
             </li>
         </ul>
+        <form v-if='inbox.length' v-on:submit.prevent>
+            <textarea placeholder='Send message'>
+            </textarea>
+            <button type='submit'>Send</button>
+        </form>
     </div>
     <script>
         let app = new Vue
@@ -46,13 +60,23 @@
                 user_id : '',
                 inbox : '',
                 outbox : '',
-                form_warning : ''
+                form_warning : '',
+                domain : ''
             },
             methods :
             {
                 input_change : function()
                 {
                     this.form_warning = '';
+                    if(validator.isEmail(this.user_input))
+                    {
+                        this.domain = this.user_input.substr
+                        (this.user_input.lastIndexOf('@')+1);
+                    }
+                },
+                is_email()
+                {
+                    return validator.isEmail(this.user_input);
                 },
                 get_user : async function()
                 {

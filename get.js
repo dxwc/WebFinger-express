@@ -66,7 +66,7 @@ async function get_actor(url)
     );
 }
 
-async function activitystream(user)
+async function activitystream(user, on_domain)
 {
     let user_self = '';
     if(val.isEmail(user))
@@ -74,8 +74,8 @@ async function activitystream(user)
         let parsed = addr.parseOneAddress(user);
         let res = await get_webfinger
         (
-            `https://${parsed.domain}/.well-known/webfinger?` +
-            `resource=${user}&rel=self`
+            `https://${on_domain ? on_domain : parsed.domain}/.well-known/webfinger?` +
+            `resource=acct:${user}&rel=self`
         );
 
         if(res[0] !== 200 || !res[2] || res[2].length === 0)
