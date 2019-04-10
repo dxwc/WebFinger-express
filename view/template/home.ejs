@@ -102,6 +102,7 @@
                     {
                         res = await axios.get(`/user/?q=${this.user_input}`);
                         res = res.data;
+                        this.form_warning = 'Processing information...';
                     }
                     catch(err)
                     {
@@ -112,11 +113,14 @@
                     {
                         try
                         {
-                            this.profile_image = res.icon.url;
-                            this.user_name = res.name;
-                            this.user_id = res.id;
-                            this.inbox = res.inbox;
-                            this.outbox = res.outbox;
+                            this.profile_image = res.icon && res.icon.url ?
+                                                    res.icon.url : '';
+                            this.user_name = res.name ? res.name :
+                                            res.preferredUsername ?
+                                            res.preferredUsername : '';
+                            this.user_id = res.id ? res.id : '';
+                            this.inbox = res.inbox ? res.inbox : '';
+                            this.outbox = res.outbox ? res.outbox : '';
                             this.form_warning = '';
                         }
                         catch(err)
