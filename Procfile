@@ -1,0 +1,1 @@
+web: host='activitypub.herokuapp.com' node index.js
