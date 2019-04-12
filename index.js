@@ -4,6 +4,7 @@ const helmet   = require('helmet');
 const https    = require('https');
 const fs       = require('fs');
 
+/*
 let https_options;
 if(process.env.fullchain && process.env.privkey) https_options =
 {
@@ -20,6 +21,7 @@ if(process.env.fullchain && process.env.privkey) app.use((req, res, next) =>
     else
         next();
 });
+*/
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -34,8 +36,10 @@ app.use(require('./controller/'));
 let http_server = app.listen(process.env.PORT || '9001')
 .on('listening', () =>
 {
+    /*
     if(process.env.fullchain && process.env.privkey)
         https.createServer(https_options, app).listen(443);
+        */
     console.info
     (
         '- HTTP server started,',

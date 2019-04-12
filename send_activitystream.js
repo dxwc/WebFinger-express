@@ -20,8 +20,10 @@ module.exports = (data, do_not_redirect_to_https) =>
 
     return (req, res, next) =>
     {
+        /*
         if(!req.secure && !do_not_redirect_to_https)
             return res.redirect(`https://${process.env.d_host}${req.originalUrl}`);
+            */
 
         if
         (

@@ -24,8 +24,10 @@ module.exports = (data, do_not_redirect_to_https) =>
 
         res.setHeader('Access-Control-Allow-Origin', '*');
 
+        /*
         if(!req.secure && !do_not_redirect_to_https)
         return res.redirect(`https://${process.env.d_host}${req.originalUrl}`);
+        */
 
         if
         (
@@ -35,6 +37,11 @@ module.exports = (data, do_not_redirect_to_https) =>
         )
         return res.status(400).send('Must contain resource query parameter');
 
+        if(req.query.resource.indexOf('acct:') === 0)
+        {
+            req.query.resource = req.query.resource.substring(5);
+            console.log(req.query.resource);
+        }
         if(req.query.resource.trim() !== data.subject)
         return res.status(404)
         .send('Server has no information on the requested resource');
