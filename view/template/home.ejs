@@ -42,8 +42,8 @@
                 Outbox: <a v-bind:href='outbox'>{{ outbox }}</a>
             </li>
         </ul>
-        <form v-if='inbox.length' v-on:submit.prevent>
-            <textarea placeholder='Send message'>
+        <form v-if='inbox.length' v-on:submit.prevent='send_message'>
+            <textarea v-model='message' placeholder='Send message'>
             </textarea>
             <button type='submit'>Send</button>
         </form>
@@ -61,7 +61,8 @@
                 inbox : '',
                 outbox : '',
                 form_warning : '',
-                domain : ''
+                domain : '',
+                message : ''
             },
             methods :
             {
@@ -127,6 +128,42 @@
                         {
                             this.form_warning = 'Error finding data in stream';
                         }
+                    }
+                },
+                send_message : async function()
+                {
+                    if(this.inbox.length === 0)
+                    {
+                        this.form_warning = 'Must select user first';
+                        return;
+                    }
+                    if(this.message.length === 0)
+                    {
+                        this.form_warning = 'Input must not be empty';
+                        return;
+                    }
+
+                    this.form_warning = 'Attempting to send...';
+                    let res;
+                    try
+                    {
+                        res = await axios.post
+                        (
+                            '/send',
+                            {
+                                inbox : this.inbox,
+                                message : this.message
+                            }
+                        );
+                        res = res.data;
+                        this.form_warning = 'Processing information...';
+                        console.log(res.data);
+                    }
+                    catch(err)
+                    {
+                        console.error(err);
+                        this.form_warning = 'Error sending';
+                        return;
                     }
                 }
             }

@@ -10,8 +10,11 @@ let signature = sigGen.sign(permKey, 'base64');
 let header = `keyId="${keyId}",headers="(request-target) host date",signature="` +
               signature + '"';
 
+module.exports = header;
+/*
 module.exports = (req, res, next) =>
 {
     res.set('Signature', header);
     next();
 }
+*/

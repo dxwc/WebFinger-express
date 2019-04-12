@@ -35,6 +35,7 @@ router.use(require('../send_activitystream.js')
 		"publicKeyPem": pubkey
 	}
 }, process.env.debug));
+router.use(require('./send.js'));
 router.use(require('./home.js'));
 router.use(require('./404.js')); // last route
 
