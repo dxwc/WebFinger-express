@@ -1,1 +1,1 @@
-web: host='activitypub.herokuapp.com' node index.js
+web: d_host='activitypub.herokuapp.com' node index.js

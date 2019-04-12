@@ -3,16 +3,16 @@ let router = require('express').Router();
 // tofix: validator does not recognize as email with port, should it ?
 router.use(require('../send_webfinger.js')
 ({
-    subject : `test@${process.env.host}`,
+    subject : `test@${process.env.d_host}`,
     links :
     [
         {
             rel : 'self',
             type : 'application/activity+json',
-            href : `https://${process.env.host}/actor`
+            href : `https://${process.env.d_host}/actor`
         }
     ]
-}, false));
+}, process.env.debug));
 
 let path = require('path');
 let pubkey = require('fs').readFileSync
@@ -24,17 +24,17 @@ router.use(require('../send_activitystream.js')
 		"https://w3id.org/security/v1"
 	],
 
-	"id": `http://${process.env.host}/actor`,
+	"id": `http://${process.env.d_host}/actor`,
 	"type": "Person",
 	"preferredUsername": "test",
-	"inbox": `http://${process.env.host}/inbox`,
+	"inbox": `http://${process.env.d_host}/inbox`,
 
 	"publicKey": {
-		"id": `http://${process.env.host}/actor#main-key`,
-		"owner": `http://${process.env.host}/actor`,
+		"id": `http://${process.env.d_host}/actor#main-key`,
+		"owner": `http://${process.env.d_host}/actor`,
 		"publicKeyPem": pubkey
 	}
-}, false));
+}, process.env.debug));
 router.use(require('./home.js'));
 router.use(require('./404.js')); // last route
 

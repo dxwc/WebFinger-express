@@ -16,7 +16,7 @@ app.use(helmet());
 if(process.env.fullchain && process.env.privkey) app.use((req, res, next) =>
 {
     if(!req.secure)
-        return res.redirect(['https://', process.env.host, req.url].join(''));
+        return res.redirect(['https://', process.env.d_host, req.url].join(''));
     else
         next();
 });

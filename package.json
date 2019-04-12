@@ -1,6 +1,6 @@
 {
   "scripts": {
-      "start": "host='localhost:9001' node index.js"
+      "start": "debug=false d_host='localhost:9001' node index.js"
   },
   "dependencies": {
     "ejs": "^2.6.1",
