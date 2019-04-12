@@ -1,4 +1,7 @@
 {
+  "scripts": {
+      "start": "host='localhost:9001' node index.js"
+  },
   "dependencies": {
     "ejs": "^2.6.1",
     "email-addresses": "^3.0.3",
